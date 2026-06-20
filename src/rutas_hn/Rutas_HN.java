@@ -15,138 +15,380 @@ public class Rutas_HN {
     /**
      * @param args the command line arguments
      */
-    
-     static Ruta[] rutas = new Ruta[5];
-     static Bus[] buses = new Bus[5];
-    
+    static Scanner scan = new Scanner(System.in);
+    static Ruta[] rutas = new Ruta[5];
+    static Bus[] buses = new Bus[5];
+
     public static void main(String[] args) {
-        // TODO code application logic here
-        Scanner sc = new Scanner(System.in);
-        
         cargarDatos();
-        int opcion;
-        
-         do {
-            System.out.println("\n===== RUTABUS =====");
-            System.out.println("1. Consultar rutas");
-            System.out.println("2. Buscar ruta por zona");
-            System.out.println("3. Buscar ruta por destino");
-            System.out.println("4. Ver buses por ruta");
-            System.out.println("5. Salir");
-            System.out.print("Seleccione una opcion: ");
-            opcion = sc.nextInt();
-            sc.nextLine();
+        int opcion = 0;
+
+        do {
+            limpiarPantalla();
+            mostrarMenuGeneral();
+            opcion = leerOpcion();
 
             switch (opcion) {
                 case 1:
-                    consultarRutas();
+                    limpiarPantalla();
+                    verCatalogoYDetalles();
                     break;
                 case 2:
-                    buscarPorZona();
+                    limpiarPantalla();
+                    buscarPorInicio();
                     break;
                 case 3:
+                    limpiarPantalla();
                     buscarPorDestino();
                     break;
                 case 4:
-                    verBusesPorRuta();
+                    limpiarPantalla();
+                    buscarPorNombre();
                     break;
                 case 5:
+                    limpiarPantalla();
+                    buscarPorUbicacion();
+                    break;
+                case 6:
                     System.out.println("Gracias por usar Rutas HN.");
                     break;
                 default:
-                    System.out.println("Opcion invalida.");
+                    System.out.println("Opcion invalida. Seleccione un numero del 1 al 6.");
             }
-        } while (opcion != 5);   
-    } // fina main
-    
-    
-     public static void cargarDatos() {
-        rutas[0] = new Ruta("Ruta 1", "Centro", "UNAH-VS", "Centro", "Centro - Mercado - UNAH-VS");
-        rutas[1] = new Ruta("Ruta 2", "Terminal", "Megaplaza", "Circunvalacion", "Terminal - Circunvalacion - Megaplaza");
-        rutas[2] = new Ruta("Ruta 3", "Medina", "Hospital Mario Catarino", "Medina", "Medina - Centro - Hospital");
+        } while (opcion != 6);
+    }//Fin de Main
+
+    /**
+     * Muestra todas las opciones disponibles para el usuario general.
+     */
+    public static void mostrarMenuGeneral() {
+        System.out.println("\n================================");
+        System.out.println("          RUTAS HN");
+        System.out.println("================================");
+        System.out.println("1. Ver catalogo y detalles de rutas");
+        System.out.println("2. Buscar rutas por punto de inicio");
+        System.out.println("3. Buscar rutas por punto de destino");
+        System.out.println("4. Buscar rutas por nombre");
+        System.out.println("5. Buscar rutas por ubicacion");
+        System.out.println("6. Salir");
+        System.out.print("Seleccione una opcion: ");
+    }//Fin de Funcion mostrarMenuGeneral
+
+    /**
+     * Lee la opcion del menu y evita que el programa se cierre si el usuario
+     * escribe letras en lugar de un numero.
+     */
+    public static int leerOpcion() {
+        int opcionTemporal = 0;
+        String captura = scan.nextLine();
+
+        try {
+            opcionTemporal = Integer.parseInt(captura);
+        } catch (NumberFormatException error) {
+            opcionTemporal = 0;
+        }
+
+        return opcionTemporal;
+    }//Fin de Funcion leerOpcion
+
+    /**
+     * Carga la informacion inicial de las rutas y sus paradas intermedias.
+     */
+    public static void cargarDatos() {
+        String[] paradasRuta1 = {"Mercado Central", "Barrio Paz Barahona", "Hospital del Norte"};
+        String[] paradasRuta2 = {"Circunvalacion", "Universidad Privada", "Mall Galerias"};
+        String[] paradasRuta3 = {"Centro", "Barrio Cabanas", "Hospital Leonardo Martinez"};
+        String[] paradasRuta4 = {"Monumento a la Madre", "Rio de Piedras", "Trejo"};
+        String[] paradasRuta5 = {"Terminal Metropolitana", "Lopez Arellano", "Chamelecon"};
+
+        rutas[0] = new Ruta("Ruta 1", "Centro", "UNAH-VS",
+                paradasRuta1, 12.5, 45);
+        rutas[1] = new Ruta("Ruta 2", "Terminal", "Megaplaza",
+                paradasRuta2, 10.8, 35);
+        rutas[2] = new Ruta("Ruta 3", "Medina", "Hospital Mario Catarino",
+                paradasRuta3, 8.4, 30);
+        rutas[3] = new Ruta("Ruta 4", "Parque Central", "Universidad Catolica",
+                paradasRuta4, 9.7, 40);
+        rutas[4] = new Ruta("Ruta 5", "Gran Central Metropolitana", "La Lima",
+                paradasRuta5, 18.2, 60);
 
         buses[0] = new Bus("Bus 101", "Ruta 1");
         buses[1] = new Bus("Bus 102", "Ruta 1");
         buses[2] = new Bus("Bus 201", "Ruta 2");
         buses[3] = new Bus("Bus 301", "Ruta 3");
-    }
-    
-     public static void consultarRutas() {
-        System.out.println("\n--- RUTAS DISPONIBLES ---");
+        buses[4] = new Bus("Bus 401", "Ruta 4");
+    }//Fin de Funcion cargarDatos
 
-        for (int i = 0; i < rutas.length; i++) {
-            if (rutas[i] != null) {
-                System.out.println("Ruta: " + rutas[i].nombre);
-                System.out.println("Origen: " + rutas[i].origen);
-                System.out.println("Destino: " + rutas[i].destino);
-                System.out.println("Zona: " + rutas[i].zona);
-                System.out.println("Recorrido: " + rutas[i].recorrido);
-                System.out.println("------------------------");
+    /**
+     * Busca todas las rutas que comienzan en el lugar ingresado.
+     */
+    public static void buscarPorInicio() {
+        int opcion = 0;
+
+        do {
+            limpiarPantalla();
+            System.out.println("\n===== BUSQUEDA POR PUNTO DE INICIO =====");
+            System.out.print("Ingrese el punto de inicio: ");
+            String inicioBuscado = scan.nextLine();
+
+            boolean encontrado = false;
+
+            for (int i = 0; i < rutas.length; i++) {
+                if (rutas[i] != null
+                        && rutas[i].origen.equalsIgnoreCase(inicioBuscado)) {
+                    mostrarResumenRuta(rutas[i]);
+                    encontrado = true;
+                }
+            }//Fin de Ciclo For
+
+            if (!encontrado) {
+                System.out.println("No se encontraron rutas con ese punto de inicio.");
             }
-        }
-    }
-     
-     public static void buscarPorZona() {
-         Scanner sc = new Scanner(System.in);
-        System.out.print("Ingrese la zona: ");
-        String zona = sc.nextLine();
 
-        boolean encontrado = false;
+            opcion = menuRepetirBusqueda();
+        } while (opcion != 2);
+    }//Fin de Funcion buscarPorInicio
 
-        for (int i = 0; i < rutas.length; i++) {
-            if (rutas[i] != null && rutas[i].zona.equalsIgnoreCase(zona)) {
-                System.out.println("Ruta encontrada: " + rutas[i].nombre);
-                System.out.println("Recorrido: " + rutas[i].recorrido);
-                encontrado = true;
-            }
-        }
-
-        if (!encontrado) {
-            System.out.println("No se encontraron rutas en esa zona.");
-        }
-    }
-    
-     
+    /**
+     * Busca todas las rutas que terminan en el destino ingresado.
+     */
     public static void buscarPorDestino() {
-        Scanner sc = new Scanner(System.in);
-        System.out.print("Ingrese el destino: ");
-        String destino = sc.nextLine();
+        int opcion = 0;
 
-        boolean encontrado = false;
+        do {
+            limpiarPantalla();
+            System.out.println("\n===== BUSQUEDA POR PUNTO DE DESTINO =====");
+            System.out.print("Ingrese el punto de destino: ");
+            String destinoBuscado = scan.nextLine();
 
-        for (int i = 0; i < rutas.length; i++) {
-            if (rutas[i] != null && rutas[i].destino.equalsIgnoreCase(destino)) {
-                System.out.println("Ruta encontrada: " + rutas[i].nombre);
-                System.out.println("Origen: " + rutas[i].origen);
-                System.out.println("Recorrido: " + rutas[i].recorrido);
-                encontrado = true;
+            boolean encontrado = false;
+
+            for (int i = 0; i < rutas.length; i++) {
+                if (rutas[i] != null
+                        && rutas[i].destino.equalsIgnoreCase(destinoBuscado)) {
+                    mostrarResumenRuta(rutas[i]);
+                    encontrado = true;
+                }
+            }//Fin de Ciclo For
+
+            if (!encontrado) {
+                System.out.println("No se encontraron rutas hacia ese destino.");
             }
-        }
 
-        if (!encontrado) {
-            System.out.println("No se encontraron rutas hacia ese destino.");
-        }
-    }
-    
-    public static void verBusesPorRuta() {
-        Scanner sc = new Scanner(System.in);
-        System.out.print("Ingrese el nombre de la ruta: ");
-        String ruta = sc.nextLine();
+            opcion = menuRepetirBusqueda();
+        } while (opcion != 2);
+    }//Fin de Funcion buscarPorDestino
 
-        boolean encontrado = false;
+    /**
+     * Busca una ruta utilizando su nombre.
+     */
+    public static void buscarPorNombre() {
+        int opcion = 0;
 
-        for (int i = 0; i < buses.length; i++) {
-            if (buses[i] != null && buses[i].ruta.equalsIgnoreCase(ruta)) {
-                System.out.println("Bus disponible: " + buses[i].numeroBus);
-                encontrado = true;
+        do {
+            limpiarPantalla();
+            System.out.println("\n===== BUSQUEDA POR NOMBRE =====");
+            System.out.print("Ingrese el nombre de la ruta: ");
+            String nombreBuscado = scan.nextLine();
+
+            boolean encontrado = false;
+
+            for (int i = 0; i < rutas.length; i++) {
+                if (rutas[i] != null
+                        && rutas[i].nombre.equalsIgnoreCase(nombreBuscado)) {
+                    mostrarResumenRuta(rutas[i]);
+                    encontrado = true;
+                }
+            }//Fin de Ciclo For
+
+            if (!encontrado) {
+                System.out.println("No existe una ruta registrada con ese nombre.");
             }
+
+            opcion = menuRepetirBusqueda();
+        } while (opcion != 2);
+    }//Fin de Funcion buscarPorNombre
+
+    /**
+     * Busca rutas que pasan por un origen, destino o parada intermedia.
+     */
+    public static void buscarPorUbicacion() {
+        int opcion = 0;
+
+        do {
+            limpiarPantalla();
+            System.out.println("\n===== RUTAS QUE PASAN POR UNA UBICACION =====");
+            System.out.print("Ingrese la ubicacion que desea buscar: ");
+            String ubicacionBuscada = scan.nextLine();
+
+            boolean encontrado = false;
+
+            for (int i = 0; i < rutas.length; i++) {
+                if (rutas[i] != null
+                        && rutaPasaPorUbicacion(rutas[i], ubicacionBuscada)) {
+                    mostrarRecorridoRuta(rutas[i], ubicacionBuscada);
+                    encontrado = true;
+                }
+            }//Fin de Ciclo For
+
+            if (!encontrado) {
+                System.out.println("Ninguna ruta pasa por la ubicacion ingresada.");
+            }
+
+            opcion = menuRepetirBusqueda();
+        } while (opcion != 2);
+    }//Fin de Funcion buscarPorUbicacion
+
+    /**
+     * Comprueba si una ubicacion pertenece al recorrido de una ruta.
+     */
+    public static boolean rutaPasaPorUbicacion(Ruta ruta, String ubicacion) {
+        if (ruta.origen.equalsIgnoreCase(ubicacion)
+                || ruta.destino.equalsIgnoreCase(ubicacion)) {
+            return true;
         }
 
-        if (!encontrado) {
-            System.out.println("No hay buses registrados para esa ruta.");
-        }
-    }
-     
-    
-    
-} // final class
+        for (int i = 0; i < ruta.paradasIntermedias.length; i++) {
+            if (ruta.paradasIntermedias[i].equalsIgnoreCase(ubicacion)) {
+                return true;
+            }
+        }//Fin de Ciclo For
+
+        return false;
+    }//Fin de Funcion rutaPasaPorUbicacion
+
+    /**
+     * Muestra las rutas disponibles y permite seleccionar una para ver
+     * toda su informacion.
+     */
+    public static void verCatalogoYDetalles() {
+        int opcion = 0;
+
+        do {
+            limpiarPantalla();
+            System.out.println("\n========== CATALOGO DE RUTAS ==========");
+
+            for (int i = 0; i < rutas.length; i++) {
+                if (rutas[i] != null) {
+                    System.out.printf("%d. %s - %s a %s%n",
+                            i + 1,
+                            rutas[i].nombre,
+                            rutas[i].origen,
+                            rutas[i].destino);
+                }
+            }//Fin de Ciclo For
+
+            System.out.println("0. Regresar al menu general");
+            System.out.print("Ingrese el numero de la ruta que desea ver o ingrese 0 para regresar al menu anterior: ");
+            opcion = leerOpcion();
+
+            if (opcion >= 1 && opcion <= rutas.length
+                    && rutas[opcion - 1] != null) {
+                limpiarPantalla();
+                mostrarDetalles(rutas[opcion - 1]);
+                regresarDetalles();
+            } else if (opcion != 0) {
+                System.out.println("La ruta seleccionada no existe.");
+            }
+        } while (opcion != 0);
+    }//Fin de Funcion verCatalogoYDetalles
+
+    /**
+     * Presenta las opciones para repetir una busqueda o volver al menu.
+     */
+    public static int menuRepetirBusqueda() {
+        int opcion = 0;
+
+        do {
+            System.out.println("\nOpciones disponibles:");
+            System.out.println("1. Realizar otra busqueda");
+            System.out.println("2. Regresar al menu general");
+            System.out.print("Seleccione una opcion: ");
+            opcion = leerOpcion();
+
+            if (opcion != 1 && opcion != 2) {
+                System.out.println("Opcion invalida.");
+            }
+        } while (opcion != 1 && opcion != 2);
+
+        return opcion;
+    }//Fin de Funcion menuRepetirBusqueda
+
+    /**
+     * Mantiene los detalles en pantalla hasta que el usuario quiera volver
+     * al listado de rutas.
+     */
+    public static void regresarDetalles() {
+        int opcion = 0;
+
+        do {
+            System.out.println("\nOpciones disponibles:");
+            System.out.println("1. Regresar al listado de rutas");
+            System.out.print("Seleccione una opcion: ");
+            opcion = leerOpcion();
+
+            if (opcion != 1) {
+                System.out.println("Opcion invalida.");
+            }
+        } while (opcion != 1);
+    }//Fin de Funcion regresarDetalles
+
+    /**
+     * Imprime la informacion resumida de una ruta encontrada.
+     */
+    public static void mostrarResumenRuta(Ruta ruta) {
+        System.out.println("\nRuta encontrada: " + ruta.nombre);
+        System.out.println("Inicio: " + ruta.origen);
+        System.out.println("Destino: " + ruta.destino);
+        System.out.println("---------------------------------------");
+    }//Fin de Funcion mostrarResumenRuta
+
+    /**
+     * Muestra el recorrido completo de una ruta que pasa por la ubicacion
+     * ingresada por el usuario.
+     */
+    public static void mostrarRecorridoRuta(Ruta ruta, String ubicacionBuscada) {
+        System.out.println("\nRuta encontrada: " + ruta.nombre);
+        System.out.println("La ruta pasa por: " + ubicacionBuscada);
+        System.out.println("Recorrido completo:");
+        System.out.println("  Inicio: " + ruta.origen);
+
+        for (int i = 0; i < ruta.paradasIntermedias.length; i++) {
+            System.out.printf("  Parada %d: %s%n",
+                    i + 1, ruta.paradasIntermedias[i]);
+        }//Fin de Ciclo For
+
+        System.out.println("  Destino: " + ruta.destino);
+        System.out.println("---------------------------------------");
+    }//Fin de Funcion mostrarRecorridoRuta
+
+    /**
+     * Imprime todos los datos y las paradas intermedias de una ruta.
+     */
+    public static void mostrarDetalles(Ruta ruta) {
+        System.out.println("\n========== DETALLES DE LA RUTA ==========");
+        System.out.println("Nombre: " + ruta.nombre);
+        System.out.println("Inicio: " + ruta.origen);
+        System.out.println("Destino: " + ruta.destino);
+        System.out.println("Paradas intermedias:");
+
+        for (int i = 0; i < ruta.paradasIntermedias.length; i++) {
+            System.out.printf("  %d. %s%n", i + 1, ruta.paradasIntermedias[i]);
+        }//Fin de Ciclo For
+
+        System.out.printf("Distancia: %.2f kilometros%n", ruta.distancia);
+        System.out.printf("Tiempo estimado: %d minutos%n", ruta.tiempoEstimado);
+        System.out.println("==========================================");
+    }//Fin de Funcion mostrarDetalles
+
+    /**
+     * Limpia visualmente la consola para que cada menu aparezca separado.
+     * Se utilizan saltos de linea para que funcione en la consola de NetBeans.
+     */
+    public static void limpiarPantalla() {
+        for (int i = 0; i < 30; i++) {
+            System.out.println("");
+        }//Fin de Ciclo For
+    }//Fin de Funcion limpiarPantalla
+
+}//Fin de Class
