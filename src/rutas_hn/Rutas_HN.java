@@ -24,23 +24,29 @@ public class Rutas_HN {
         int opcion = 0;
 
         do {
+            limpiarPantalla();
             mostrarMenuGeneral();
             opcion = leerOpcion();
 
             switch (opcion) {
                 case 1:
+                    limpiarPantalla();
                     verCatalogoYDetalles();
                     break;
                 case 2:
+                    limpiarPantalla();
                     buscarPorInicio();
                     break;
                 case 3:
+                    limpiarPantalla();
                     buscarPorDestino();
                     break;
                 case 4:
+                    limpiarPantalla();
                     buscarPorNombre();
                     break;
                 case 5:
+                    limpiarPantalla();
                     buscarPorUbicacion();
                     break;
                 case 6:
@@ -120,6 +126,7 @@ public class Rutas_HN {
         int opcion = 0;
 
         do {
+            limpiarPantalla();
             System.out.println("\n===== BUSQUEDA POR PUNTO DE INICIO =====");
             System.out.print("Ingrese el punto de inicio: ");
             String inicioBuscado = scan.nextLine();
@@ -149,6 +156,7 @@ public class Rutas_HN {
         int opcion = 0;
 
         do {
+            limpiarPantalla();
             System.out.println("\n===== BUSQUEDA POR PUNTO DE DESTINO =====");
             System.out.print("Ingrese el punto de destino: ");
             String destinoBuscado = scan.nextLine();
@@ -178,6 +186,7 @@ public class Rutas_HN {
         int opcion = 0;
 
         do {
+            limpiarPantalla();
             System.out.println("\n===== BUSQUEDA POR NOMBRE =====");
             System.out.print("Ingrese el nombre de la ruta: ");
             String nombreBuscado = scan.nextLine();
@@ -207,6 +216,7 @@ public class Rutas_HN {
         int opcion = 0;
 
         do {
+            limpiarPantalla();
             System.out.println("\n===== RUTAS QUE PASAN POR UNA UBICACION =====");
             System.out.print("Ingrese la ubicacion que desea buscar: ");
             String ubicacionBuscada = scan.nextLine();
@@ -255,6 +265,7 @@ public class Rutas_HN {
         int opcion = 0;
 
         do {
+            limpiarPantalla();
             System.out.println("\n========== CATALOGO DE RUTAS ==========");
 
             for (int i = 0; i < rutas.length; i++) {
@@ -273,6 +284,7 @@ public class Rutas_HN {
 
             if (opcion >= 1 && opcion <= rutas.length
                     && rutas[opcion - 1] != null) {
+                limpiarPantalla();
                 mostrarDetalles(rutas[opcion - 1]);
                 regresarDetalles();
             } else if (opcion != 0) {
@@ -368,5 +380,15 @@ public class Rutas_HN {
         System.out.printf("Tiempo estimado: %d minutos%n", ruta.tiempoEstimado);
         System.out.println("==========================================");
     }//Fin de Funcion mostrarDetalles
+
+    /**
+     * Limpia visualmente la consola para que cada menu aparezca separado.
+     * Se utilizan saltos de linea para que funcione en la consola de NetBeans.
+     */
+    public static void limpiarPantalla() {
+        for (int i = 0; i < 30; i++) {
+            System.out.println("");
+        }//Fin de Ciclo For
+    }//Fin de Funcion limpiarPantalla
 
 }//Fin de Class
