@@ -16,8 +16,10 @@ public class Rutas_HN {
      * @param args the command line arguments
      */
     static Scanner scan = new Scanner(System.in);
-    static Ruta[] rutas = new Ruta[5];
+    static Ruta[] rutas = new Ruta[20];
     static Bus[] buses = new Bus[5];
+    static final String USUARIO_ADMIN = "admin";
+    static final String CLAVE_ADMIN = "1234";
 
     public static void main(String[] args) {
         cargarDatos();
@@ -50,12 +52,16 @@ public class Rutas_HN {
                     buscarPorUbicacion();
                     break;
                 case 6:
+                    limpiarPantalla();
+                    iniciarSesionAdministrador();
+                    break;
+                case 7:
                     System.out.println("Gracias por usar Rutas HN.");
                     break;
                 default:
-                    System.out.println("Opcion invalida. Seleccione un numero del 1 al 6.");
+                    System.out.println("Opcion invalida. Seleccione un numero del 1 al 7.");
             }
-        } while (opcion != 6);
+        } while (opcion != 7);
     }//Fin de Main
 
     /**
@@ -70,7 +76,8 @@ public class Rutas_HN {
         System.out.println("3. Buscar rutas por punto de destino");
         System.out.println("4. Buscar rutas por nombre");
         System.out.println("5. Buscar rutas por ubicacion");
-        System.out.println("6. Salir");
+        System.out.println("6. Administrador");
+        System.out.println("7. Salir");
         System.out.print("Seleccione una opcion: ");
     }//Fin de Funcion mostrarMenuGeneral
 
@@ -332,6 +339,318 @@ public class Rutas_HN {
             }
         } while (opcion != 1);
     }//Fin de Funcion regresarDetalles
+
+    /**
+     * Solicita las credenciales del administrador. El usuario tiene un maximo
+     * de tres intentos antes de regresar al menu general.
+     */
+    public static void iniciarSesionAdministrador() {
+        int intentos = 0;
+        boolean accesoPermitido = false;
+
+        while (intentos < 3 && !accesoPermitido) {
+            System.out.println("\n========== ACCESO ADMINISTRADOR ==========");
+            System.out.print("Usuario: ");
+            String usuario = scan.nextLine();
+            System.out.print("Contrasenia: ");
+            String clave = scan.nextLine();
+
+            if (usuario.equals(USUARIO_ADMIN)
+                    && clave.equals(CLAVE_ADMIN)) {
+                accesoPermitido = true;
+                System.out.println("Acceso concedido.");
+            } else {
+                intentos++;
+                System.out.println("Usuario o contrasenia incorrectos.");
+                System.out.printf("Intentos disponibles: %d%n", 3 - intentos);
+            }
+        }//Fin de Ciclo While
+
+        if (accesoPermitido) {
+            menuAdministrador();
+        } else {
+            System.out.println("Se agotaron los intentos permitidos.");
+            pausarPantalla();
+        }
+    }//Fin de Funcion iniciarSesionAdministrador
+
+    /**
+     * Muestra las operaciones que puede realizar el administrador.
+     */
+    public static void menuAdministrador() {
+        int opcion = 0;
+
+        do {
+            limpiarPantalla();
+            System.out.println("\n================================");
+            System.out.println("      MENU ADMINISTRADOR");
+            System.out.println("================================");
+            System.out.println("1. Listar rutas");
+            System.out.println("2. Crear una ruta");
+            System.out.println("3. Modificar una ruta");
+            System.out.println("4. Eliminar una ruta");
+            System.out.println("5. Cerrar sesion");
+            System.out.print("Seleccione una opcion: ");
+            opcion = leerOpcion();
+
+            switch (opcion) {
+                case 1:
+                    limpiarPantalla();
+                    listarRutasAdministrador();
+                    pausarPantalla();
+                    break;
+                case 2:
+                    limpiarPantalla();
+                    crearRuta();
+                    pausarPantalla();
+                    break;
+                case 3:
+                    limpiarPantalla();
+                    modificarRuta();
+                    pausarPantalla();
+                    break;
+                case 4:
+                    limpiarPantalla();
+                    eliminarRuta();
+                    pausarPantalla();
+                    break;
+                case 5:
+                    System.out.println("Sesion de administrador cerrada.");
+                    break;
+                default:
+                    System.out.println("Opcion invalida.");
+                    pausarPantalla();
+            }
+        } while (opcion != 5);
+    }//Fin de Funcion menuAdministrador
+
+    /**
+     * Muestra las rutas con el numero utilizado para modificarlas o eliminarlas.
+     */
+    public static void listarRutasAdministrador() {
+        System.out.println("\n========== RUTAS REGISTRADAS ==========");
+
+        for (int i = 0; i < rutas.length; i++) {
+            if (rutas[i] != null) {
+                System.out.printf("%d. %s - %s a %s%n",
+                        i + 1,
+                        rutas[i].nombre,
+                        rutas[i].origen,
+                        rutas[i].destino);
+            }
+        }//Fin de Ciclo For
+    }//Fin de Funcion listarRutasAdministrador
+
+    /**
+     * Captura todos los datos y registra una ruta en el primer espacio libre.
+     */
+    public static void crearRuta() {
+        int posicionLibre = buscarPosicionLibre();
+
+        if (posicionLibre == -1) {
+            System.out.println("No hay espacio disponible para registrar otra ruta.");
+            return;
+        }
+
+        System.out.println("\n========== CREAR RUTA ==========");
+        System.out.print("Nombre de la ruta: ");
+        String nombre = scan.nextLine();
+
+        if (buscarIndicePorNombre(nombre) != -1) {
+            System.out.println("Ya existe una ruta registrada con ese nombre.");
+            return;
+        }
+
+        System.out.print("Punto de inicio: ");
+        String origen = scan.nextLine();
+        System.out.print("Punto de destino: ");
+        String destino = scan.nextLine();
+        String[] paradas = capturarParadas();
+        double distancia = leerDoublePositivo("Distancia en kilometros: ");
+        int tiempo = leerEnteroPositivo("Tiempo estimado en minutos: ");
+
+        rutas[posicionLibre] = new Ruta(nombre, origen, destino,
+                paradas, distancia, tiempo);
+
+        System.out.println("Ruta creada correctamente.");
+    }//Fin de Funcion crearRuta
+
+    /**
+     * Sustituye la informacion de una ruta seleccionada por el administrador.
+     */
+    public static void modificarRuta() {
+        listarRutasAdministrador();
+        System.out.print("\nSeleccione el numero de la ruta a modificar: ");
+        int posicion = leerOpcion() - 1;
+
+        if (posicion < 0 || posicion >= rutas.length
+                || rutas[posicion] == null) {
+            System.out.println("La ruta seleccionada no existe.");
+            return;
+        }
+
+        System.out.println("\nDatos actuales:");
+        mostrarDetalles(rutas[posicion]);
+        System.out.println("\nIngrese los nuevos datos:");
+        System.out.print("Nombre de la ruta: ");
+        String nombre = scan.nextLine();
+
+        int posicionNombre = buscarIndicePorNombre(nombre);
+
+        if (posicionNombre != -1 && posicionNombre != posicion) {
+            System.out.println("Ya existe otra ruta registrada con ese nombre.");
+            return;
+        }
+
+        System.out.print("Punto de inicio: ");
+        String origen = scan.nextLine();
+        System.out.print("Punto de destino: ");
+        String destino = scan.nextLine();
+        String[] paradas = capturarParadas();
+        double distancia = leerDoublePositivo("Distancia en kilometros: ");
+        int tiempo = leerEnteroPositivo("Tiempo estimado en minutos: ");
+
+        rutas[posicion] = new Ruta(nombre, origen, destino,
+                paradas, distancia, tiempo);
+
+        System.out.println("Ruta modificada correctamente.");
+    }//Fin de Funcion modificarRuta
+
+    /**
+     * Elimina una ruta despues de solicitar confirmacion.
+     */
+    public static void eliminarRuta() {
+        listarRutasAdministrador();
+        System.out.print("\nSeleccione el numero de la ruta a eliminar: ");
+        int posicion = leerOpcion() - 1;
+
+        if (posicion < 0 || posicion >= rutas.length
+                || rutas[posicion] == null) {
+            System.out.println("La ruta seleccionada no existe.");
+            return;
+        }
+
+        System.out.printf("Desea eliminar %s?%n", rutas[posicion].nombre);
+        System.out.println("1. Si");
+        System.out.println("2. No");
+        System.out.print("Seleccione una opcion: ");
+        int confirmacion = leerOpcion();
+
+        if (confirmacion == 1) {
+            for (int i = posicion; i < rutas.length - 1; i++) {
+                rutas[i] = rutas[i + 1];
+            }//Fin de Ciclo For
+
+            rutas[rutas.length - 1] = null;
+            System.out.println("Ruta eliminada correctamente.");
+        } else {
+            System.out.println("La ruta no fue eliminada.");
+        }
+    }//Fin de Funcion eliminarRuta
+
+    /**
+     * Captura las paradas intermedias que pertenecen a una ruta.
+     */
+    public static String[] capturarParadas() {
+        int cantidad = 0;
+
+        do {
+            cantidad = leerEnteroPositivo(
+                    "Cantidad de paradas intermedias (maximo 10): ");
+
+            if (cantidad > 10) {
+                System.out.println("Solo se permiten hasta 10 paradas.");
+            }
+        } while (cantidad > 10);
+
+        String[] paradas = new String[cantidad];
+
+        for (int i = 0; i < paradas.length; i++) {
+            System.out.printf("Nombre de la parada %d: ", i + 1);
+            paradas[i] = scan.nextLine();
+        }//Fin de Ciclo For
+
+        return paradas;
+    }//Fin de Funcion capturarParadas
+
+    /**
+     * Busca el primer espacio disponible dentro del arreglo de rutas.
+     */
+    public static int buscarPosicionLibre() {
+        for (int i = 0; i < rutas.length; i++) {
+            if (rutas[i] == null) {
+                return i;
+            }
+        }//Fin de Ciclo For
+
+        return -1;
+    }//Fin de Funcion buscarPosicionLibre
+
+    /**
+     * Busca una ruta por su nombre y devuelve su posicion.
+     */
+    public static int buscarIndicePorNombre(String nombre) {
+        for (int i = 0; i < rutas.length; i++) {
+            if (rutas[i] != null
+                    && rutas[i].nombre.equalsIgnoreCase(nombre)) {
+                return i;
+            }
+        }//Fin de Ciclo For
+
+        return -1;
+    }//Fin de Funcion buscarIndicePorNombre
+
+    /**
+     * Lee un numero entero mayor que cero.
+     */
+    public static int leerEnteroPositivo(String mensaje) {
+        int numero = 0;
+
+        do {
+            System.out.print(mensaje);
+            numero = leerOpcion();
+
+            if (numero <= 0) {
+                System.out.println("Debe ingresar un numero mayor que cero.");
+            }
+        } while (numero <= 0);
+
+        return numero;
+    }//Fin de Funcion leerEnteroPositivo
+
+    /**
+     * Lee un numero decimal mayor que cero.
+     */
+    public static double leerDoublePositivo(String mensaje) {
+        double numero = 0;
+        boolean datoValido = false;
+
+        do {
+            System.out.print(mensaje);
+            String captura = scan.nextLine();
+
+            try {
+                numero = Double.parseDouble(captura);
+                datoValido = numero > 0;
+            } catch (NumberFormatException error) {
+                datoValido = false;
+            }
+
+            if (!datoValido) {
+                System.out.println("Debe ingresar un numero mayor que cero.");
+            }
+        } while (!datoValido);
+
+        return numero;
+    }//Fin de Funcion leerDoublePositivo
+
+    /**
+     * Espera una confirmacion para continuar a la siguiente pantalla.
+     */
+    public static void pausarPantalla() {
+        System.out.println("\nPresione ENTER para continuar...");
+        scan.nextLine();
+    }//Fin de Funcion pausarPantalla
 
     /**
      * Imprime la informacion resumida de una ruta encontrada.
