@@ -29,7 +29,7 @@ public class Rutas_HN {
 
             switch (opcion) {
                 case 1:
-                    mostrarCatalogo();
+                    verCatalogoYDetalles();
                     break;
                 case 2:
                     buscarPorInicio();
@@ -44,15 +44,12 @@ public class Rutas_HN {
                     buscarPorUbicacion();
                     break;
                 case 6:
-                    verDetallesRuta();
-                    break;
-                case 7:
                     System.out.println("Gracias por usar Rutas HN.");
                     break;
                 default:
-                    System.out.println("Opcion invalida. Seleccione un numero del 1 al 7.");
+                    System.out.println("Opcion invalida. Seleccione un numero del 1 al 6.");
             }
-        } while (opcion != 7);
+        } while (opcion != 6);
     }//Fin de Main
 
     /**
@@ -62,13 +59,12 @@ public class Rutas_HN {
         System.out.println("\n================================");
         System.out.println("          RUTAS HN");
         System.out.println("================================");
-        System.out.println("1. Mostrar catalogo de rutas");
+        System.out.println("1. Ver catalogo y detalles de rutas");
         System.out.println("2. Buscar rutas por punto de inicio");
         System.out.println("3. Buscar rutas por punto de destino");
         System.out.println("4. Buscar rutas por nombre");
         System.out.println("5. Buscar rutas por ubicacion");
-        System.out.println("6. Ver detalles de una ruta");
-        System.out.println("7. Salir");
+        System.out.println("6. Salir");
         System.out.print("Seleccione una opcion: ");
     }//Fin de Funcion mostrarMenuGeneral
 
@@ -116,24 +112,6 @@ public class Rutas_HN {
         buses[3] = new Bus("Bus 301", "Ruta 3");
         buses[4] = new Bus("Bus 401", "Ruta 4");
     }//Fin de Funcion cargarDatos
-
-    /**
-     * Muestra un catalogo resumido con todas las rutas registradas.
-     */
-    public static void mostrarCatalogo() {
-        System.out.println("\n========== CATALOGO DE RUTAS ==========");
-
-        for (int i = 0; i < rutas.length; i++) {
-            if (rutas[i] != null) {
-                System.out.printf("%d. %s%n", i + 1, rutas[i].nombre);
-                System.out.printf("   Inicio: %s%n", rutas[i].origen);
-                System.out.printf("   Destino: %s%n", rutas[i].destino);
-                System.out.println("---------------------------------------");
-            }
-        }//Fin de Ciclo For
-
-        regresarMenu();
-    }//Fin de Funcion mostrarCatalogo
 
     /**
      * Busca todas las rutas que comienzan en el lugar ingresado.
@@ -238,7 +216,7 @@ public class Rutas_HN {
             for (int i = 0; i < rutas.length; i++) {
                 if (rutas[i] != null
                         && rutaPasaPorUbicacion(rutas[i], ubicacionBuscada)) {
-                    mostrarResumenRuta(rutas[i]);
+                    mostrarRecorridoRuta(rutas[i], ubicacionBuscada);
                     encontrado = true;
                 }
             }//Fin de Ciclo For
@@ -273,11 +251,11 @@ public class Rutas_HN {
      * Muestra las rutas disponibles y permite seleccionar una para ver
      * toda su informacion.
      */
-    public static void verDetallesRuta() {
+    public static void verCatalogoYDetalles() {
         int opcion = 0;
 
         do {
-            System.out.println("\n========== RUTAS DISPONIBLES ==========");
+            System.out.println("\n========== CATALOGO DE RUTAS ==========");
 
             for (int i = 0; i < rutas.length; i++) {
                 if (rutas[i] != null) {
@@ -290,7 +268,7 @@ public class Rutas_HN {
             }//Fin de Ciclo For
 
             System.out.println("0. Regresar al menu general");
-            System.out.print("Ingrese el numero de la ruta que desea ver: ");
+            System.out.print("Ingrese el numero de la ruta que desea ver o ingrese 0 para regresar al menu anterior: ");
             opcion = leerOpcion();
 
             if (opcion >= 1 && opcion <= rutas.length
@@ -301,7 +279,7 @@ public class Rutas_HN {
                 System.out.println("La ruta seleccionada no existe.");
             }
         } while (opcion != 0);
-    }//Fin de Funcion verDetallesRuta
+    }//Fin de Funcion verCatalogoYDetalles
 
     /**
      * Presenta las opciones para repetir una busqueda o volver al menu.
@@ -310,7 +288,8 @@ public class Rutas_HN {
         int opcion = 0;
 
         do {
-            System.out.println("\n1. Realizar otra busqueda");
+            System.out.println("\nOpciones disponibles:");
+            System.out.println("1. Realizar otra busqueda");
             System.out.println("2. Regresar al menu general");
             System.out.print("Seleccione una opcion: ");
             opcion = leerOpcion();
@@ -324,23 +303,6 @@ public class Rutas_HN {
     }//Fin de Funcion menuRepetirBusqueda
 
     /**
-     * Detiene el catalogo hasta que el usuario decida regresar.
-     */
-    public static void regresarMenu() {
-        int opcion = 0;
-
-        do {
-            System.out.println("\n1. Regresar al menu general");
-            System.out.print("Seleccione una opcion: ");
-            opcion = leerOpcion();
-
-            if (opcion != 1) {
-                System.out.println("Opcion invalida.");
-            }
-        } while (opcion != 1);
-    }//Fin de Funcion regresarMenu
-
-    /**
      * Mantiene los detalles en pantalla hasta que el usuario quiera volver
      * al listado de rutas.
      */
@@ -348,7 +310,8 @@ public class Rutas_HN {
         int opcion = 0;
 
         do {
-            System.out.println("\n1. Regresar al listado de rutas");
+            System.out.println("\nOpciones disponibles:");
+            System.out.println("1. Regresar al listado de rutas");
             System.out.print("Seleccione una opcion: ");
             opcion = leerOpcion();
 
@@ -367,6 +330,25 @@ public class Rutas_HN {
         System.out.println("Destino: " + ruta.destino);
         System.out.println("---------------------------------------");
     }//Fin de Funcion mostrarResumenRuta
+
+    /**
+     * Muestra el recorrido completo de una ruta que pasa por la ubicacion
+     * ingresada por el usuario.
+     */
+    public static void mostrarRecorridoRuta(Ruta ruta, String ubicacionBuscada) {
+        System.out.println("\nRuta encontrada: " + ruta.nombre);
+        System.out.println("La ruta pasa por: " + ubicacionBuscada);
+        System.out.println("Recorrido completo:");
+        System.out.println("  Inicio: " + ruta.origen);
+
+        for (int i = 0; i < ruta.paradasIntermedias.length; i++) {
+            System.out.printf("  Parada %d: %s%n",
+                    i + 1, ruta.paradasIntermedias[i]);
+        }//Fin de Ciclo For
+
+        System.out.println("  Destino: " + ruta.destino);
+        System.out.println("---------------------------------------");
+    }//Fin de Funcion mostrarRecorridoRuta
 
     /**
      * Imprime todos los datos y las paradas intermedias de una ruta.
