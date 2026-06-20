@@ -12,15 +12,18 @@ public class Ruta {
     String nombre;
     String origen;
     String destino;
-    String zona;
-    String recorrido;
+    String[] paradasIntermedias;
+    double distancia;
+    int tiempoEstimado;
 
-    public Ruta(String nombre, String origen, String destino, String zona, String recorrido) {
+    public Ruta(String nombre, String origen, String destino,
+            String[] paradasIntermedias, double distancia, int tiempoEstimado) {
         this.nombre = nombre;
         this.origen = origen;
         this.destino = destino;
-        this.zona = zona;
-        this.recorrido = recorrido;
+        this.paradasIntermedias = paradasIntermedias;
+        this.distancia = distancia;
+        this.tiempoEstimado = tiempoEstimado;
     }
     
 }
